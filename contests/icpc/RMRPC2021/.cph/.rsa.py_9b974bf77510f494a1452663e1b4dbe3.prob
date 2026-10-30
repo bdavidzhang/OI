@@ -1,0 +1,1 @@
+{"name":"Local: rsa","url":"/Users/zhangbocheng/OI/contests/icpc/RMRPC2021/rsa.py","tests":[{"id":1759433223190,"input":"13 23\n","output":"full credit"},{"id":1759433255374,"input":"431348146441 3\n","output":"no credit"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/Users/zhangbocheng/OI/contests/icpc/RMRPC2021/rsa.py","group":"local","local":true}

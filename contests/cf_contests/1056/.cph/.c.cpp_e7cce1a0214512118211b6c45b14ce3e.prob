@@ -1,0 +1,1 @@
+{"name":"Local: c","url":"/Users/zhangbocheng/OI/contests/cf_contests/1056/c.cpp","tests":[{"id":1759685911249,"input":"7\n1\n1\n4\n4 4 3 2\n3\n1 3 2\n2\n2 1\n3\n2 2 2\n3\n3 2 3\n3\n3 2 2\n","output":"2\n1\n0\n1\n2\n0\n0\n"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/Users/zhangbocheng/OI/contests/cf_contests/1056/c.cpp","group":"local","local":true}

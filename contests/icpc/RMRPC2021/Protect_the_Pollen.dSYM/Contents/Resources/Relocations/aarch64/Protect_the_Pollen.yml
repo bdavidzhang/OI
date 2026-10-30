@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/zhangbocheng/OI/contests/icpc/RMRPC2021/Protect_the_Pollen'
+relocations:     []
+...

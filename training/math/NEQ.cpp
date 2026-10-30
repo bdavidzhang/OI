@@ -1,0 +1,88 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+using ll = long long;
+using vi = vector<int>;
+using vll = vector<ll>;
+using db = double;
+#define all(v) ((v).begin()),((v).end())
+#define sz(v) ((int)((v).size()))
+#define fi first
+#define se second
+#define mp make_pair
+#define pb push_back
+
+const ll MOD = 1e9+7; // or 1e9 + 7
+const db eps = 1e-9;
+
+ll mul(ll a, ll b, ll p = MOD) {
+    a %= p;
+    if(a < 0) a += p;
+    b %= p;
+    if(b < 0) b += p;
+    return (__int128)a * b % p;
+}
+ll qpow(ll a, ll b, ll p = MOD) {
+    ll r = 1 % p;
+    a %= p;
+    if(a < 0) a += p;
+    while(b) {
+        if(b & 1) r = mul(r, a, p);
+        a = mul(a, a, p);
+        b >>= 1;
+    }
+    return r;
+}
+ll combMod;
+vll fac, ifac;
+void initComb(int n, ll p = MOD) {
+    combMod = p;
+    fac.assign(n + 1, 1);
+    ifac.assign(n + 1, 1);
+    for (int i = 1; i <= n; ++i) fac[i] = fac[i - 1] * i % p;
+    ifac[n] = qpow(fac[n], p - 2, p);
+    for (int i = n; i >= 1; --i) ifac[i - 1] = ifac[i] * i % p;
+}
+ll C(int n, int k) {
+    if(k < 0 || k > n) return 0;
+    return fac[n] * ifac[k] % combMod * ifac[n - k] % combMod;
+}
+ll lucas(ll n, ll k) {
+    if(k == 0) return 1;
+    return C(n % combMod, k % combMod) * lucas(n / combMod, k / combMod) % combMod;
+}
+ll comp(ll m, ll n){
+  ll ans = 0;
+  for(int k = 1; k <= n; ++k){
+    ll cur = mul(C(m-k,n-k),fac[n-k]);
+    cur = mul(cur,C(n,k));
+    if(k & 1) ans = (ans + cur) % MOD;
+    else ans = (ans - cur + MOD) % MOD;
+  }
+  ans = mul(C(m,n),ans);
+  ans = mul(fac[n],ans);
+  return ans;
+}
+
+void solve(){
+  int n,m;
+  cin >> n >> m;
+  initComb(m);  
+  ll ans = 1;
+  ll part = mul(C(m,n),fac[n]);
+  ll tot = mul(part,part);
+  ans = mul(ans,tot);
+  ll eq = comp(m,n); 
+  // cout << eq << endl;
+  ans = (tot - eq + MOD) % MOD;
+  cout << ans << '\n'; 
+}
+
+
+int main(){
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+  solve();
+
+  return 0;
+}

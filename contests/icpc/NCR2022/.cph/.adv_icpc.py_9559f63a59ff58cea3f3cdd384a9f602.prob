@@ -1,0 +1,1 @@
+{"name":"Local: adv_icpc","url":"/Users/zhangbocheng/OI/contests/icpc/NCR2022/adv_icpc.py","tests":[{"id":1759330931405,"input":"3 3\n???\n?I?\n???\n","output":"243"},{"id":1759330948870,"input":"2 2\nIC\nPC\n","output":"1"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/Users/zhangbocheng/OI/contests/icpc/NCR2022/adv_icpc.py","group":"local","local":true}

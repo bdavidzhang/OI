@@ -1,0 +1,1 @@
+{"name":"Local: diameter","url":"/Users/zhangbocheng/Learning/OI/training/geo/diameter.cpp","tests":[{"id":1793067322974,"input":"4\n0 0\n0 1\n1 1\n1 0\n","output":"2"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/Users/zhangbocheng/Learning/OI/training/geo/diameter.cpp","group":"local","local":true}

@@ -1,0 +1,1 @@
+{"name":"Local: F","url":"/Users/zhangbocheng/OI/contests/icpc/NCR2022/F.cpp","tests":[{"id":1759273016794,"input":"3 3\nfirst\nsecond\nthird\nfirst second\nthird first\nsecond third","output":"0\n1\n0"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/Users/zhangbocheng/OI/contests/icpc/NCR2022/F.cpp","group":"local","local":true}

@@ -1,0 +1,1 @@
+{"name":"Local: template","url":"/Users/zhangbocheng/OI/training/fft/template.cpp","tests":[{"id":1759077438189,"input":"1 2\n1 2\n1 2 1","output":"1 4 5 2"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/Users/zhangbocheng/OI/training/fft/template.cpp","group":"local","local":true}
