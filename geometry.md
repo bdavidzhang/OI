@@ -379,7 +379,7 @@ db polyCircle(vector<P>& A, P o, db r) { // positive if A is CCW
 }
 ```
 
-### 两圆面积交 & 圆的面积并
+### 两圆面积交 & 圆的面积并 / 交
 
 ```cpp
 db circleInterArea(P o1, db r1, P o2, db r2) {
@@ -392,39 +392,43 @@ db circleInterArea(P o1, db r1, P o2, db r2) {
 }
 ```
 
-Union: Green's theorem. Walk every arc not covered by another circle and add
-∫(x dy - y dx) / 2 along it. O(n² log n).
+Union / intersection / k-times cover of n circles: Green's theorem.
+Let R_k = points covered by >= k circles. Its boundary is exactly the arcs of circle i
+that lie inside exactly k-1 other circles, so sweep each circle's arcs with a coverage
+count and add ∫(x dy - y dx) / 2 of each arc to R_{cnt+1}. O(n² log n).
+
+- union = `res[1]`, intersection of all n = `res[n]`
+- covered exactly k times = `res[k] - res[k + 1]` (for k = n it is just `res[n]`)
+- perimeter of R_k: add `r[i] * (b - cur)` instead
 
 ```cpp
-db circleUnion(vector<P> o, vector<db> r) {
+vector<db> circleCover(vector<P> o, vector<db> r) { // res[k] = area covered by >= k circles
     int n = sz(o);
-    db res = 0;
+    vector<db> res(n + 1);
     for (int i = 0; i < n; ++i) {
-        vector<pair<db, db>> ev; // covered angle ranges on circle i
-        bool inside = false;
+        vector<pair<db, int>> ev; // (angle, +1 enter / -1 leave)
+        int cnt = 0; // how many other circles cover angle -PI of circle i
         for (int j = 0; j < n; ++j) if(j != i) {
             db d = len(o[j] - o[i]);
             int c = sgn(d + r[i] - r[j]);
-            if(c < 0 || (!c && (sgn(d) || j < i))) { inside = true; break; } // i inside j (equal circles: keep one)
+            if(c < 0 || (!c && (sgn(d) || j < i))) { ++cnt; continue; } // i inside j (equal circles: lower index covers)
             if(sgn(d - r[i] - r[j]) >= 0 || sgn(d + r[j] - r[i]) <= 0) continue; // apart, or j inside i
             db base = atan2(o[j].y - o[i].y, o[j].x - o[i].x);
-            db t = acos((r[i] * r[i] + d * d - r[j] * r[j]) / (2 * r[i] * d));
+            db t = acos(max((db)-1, min((db)1, (r[i] * r[i] + d * d - r[j] * r[j]) / (2 * r[i] * d))));
             db a = base - t, b = base + t;
-            if(a < -PI) ev.pb({a + 2 * PI, PI}), ev.pb({-PI, b});
-            else if(b > PI) ev.pb({a, PI}), ev.pb({-PI, b - 2 * PI});
-            else ev.pb({a, b});
+            if(a < -PI) a += 2 * PI;
+            if(b > PI) b -= 2 * PI;
+            if(a > b) ++cnt; // range wraps over -PI
+            ev.pb({a, 1}), ev.pb({b, -1});
         }
-        if(inside) continue;
-        auto add = [&](db a, db b) { // uncovered arc [a, b]
-            res += (r[i] * r[i] * (b - a) + o[i].x * r[i] * (sin(b) - sin(a)) - o[i].y * r[i] * (cos(b) - cos(a))) / 2;
-        };
         sort(all(ev));
         db cur = -PI;
-        for (auto [a, b] : ev) {
-            if(a > cur) add(cur, a);
-            cur = max(cur, b);
-        }
-        if(cur < PI) add(cur, PI);
+        auto add = [&](db b) { // arc [cur, b] of circle i, cnt other circles over it: boundary of the ">= cnt+1" region
+            res[cnt + 1] += (r[i] * r[i] * (b - cur) + o[i].x * r[i] * (sin(b) - sin(cur)) - o[i].y * r[i] * (cos(b) - cos(cur))) / 2;
+            cur = b;
+        };
+        for (auto [a, v] : ev) add(a), cnt += v;
+        add(PI);
     }
     return res;
 }
@@ -502,7 +506,7 @@ P = 洛谷.
 | 三角形的心 & 最小圆覆盖 | P1742: `minCircle` | P4288 [SHOI2014] 信号增幅仪: rotate by -a, divide x by p, then `minCircle` |
 | 交点 & 切线 | AOJ CGL_7_E: `circleCircle` | AOJ CGL_7_G: `tangents` with r2 and -r2, print touch points on circle 1 |
 | 圆与多边形面积交 | AOJ CGL_7_H: `polyCircle` | HDU 5130 Signal Interference: PB <= k PA is a circle (Apollonius), intersect it with the polygon |
-| 两圆面积交 & 圆的面积并 | CF 600D: `circleInterArea`; r up to 1e9, needs `using db = long double;` | SPOJ CIRU (P: SP8073): `circleUnion` |
+| 两圆面积交 & 圆的面积并 / 交 | CF 600D: `circleInterArea`; r up to 1e9, needs `using db = long double;` | SPOJ CIRU (P: SP8073): `circleCover(...)[1]`; SPOJ CIRUT: exactly-k areas from `circleCover` |
 | 极角扫描 | AOJ 1132 Circle and Points (= POJ 1981): `maxCover` with r = 1 | UVA1606 两亲性分子: line through a point, sort the rest by angle, two pointers |
 | 平面最近点对 | P1429 | P7883: integer coords, print the squared distance; the "check next 5 points" trick fails here |
 
