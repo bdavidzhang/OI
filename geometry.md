@@ -1,7 +1,7 @@
 # 计算几何
 
 Every section builds on **基础**. Copy top to bottom; a section only uses the ones above it.
-Assumes the usual header (`bits/stdc++.h`, `sz`, `all`, `pb`, `mp`, `fi`, `se`).
+Assumes the header from `intro.md` (`bits/stdc++.h`, `sz`, `all`, `pb`, `mp`, `fi`, `se`).
 
 Conventions:
 - points are passed by value (16 bytes, cheaper to type than `const P&`)
@@ -379,7 +379,7 @@ db polyCircle(vector<P>& A, P o, db r) { // positive if A is CCW
 }
 ```
 
-### 两圆面积交 & 圆的面积并
+### 两圆面积交 & 圆的面积并 / 交
 
 ```cpp
 db circleInterArea(P o1, db r1, P o2, db r2) {
@@ -392,39 +392,43 @@ db circleInterArea(P o1, db r1, P o2, db r2) {
 }
 ```
 
-Union: Green's theorem. Walk every arc not covered by another circle and add
-∫(x dy - y dx) / 2 along it. O(n² log n).
+Union / intersection / k-times cover of n circles: Green's theorem.
+Let R_k = points covered by >= k circles. Its boundary is exactly the arcs of circle i
+that lie inside exactly k-1 other circles, so sweep each circle's arcs with a coverage
+count and add ∫(x dy - y dx) / 2 of each arc to R_{cnt+1}. O(n² log n).
+
+- union = `res[1]`, intersection of all n = `res[n]`
+- covered exactly k times = `res[k] - res[k + 1]` (for k = n it is just `res[n]`)
+- perimeter of R_k: add `r[i] * (b - cur)` instead
 
 ```cpp
-db circleUnion(vector<P> o, vector<db> r) {
+vector<db> circleCover(vector<P> o, vector<db> r) { // res[k] = area covered by >= k circles
     int n = sz(o);
-    db res = 0;
+    vector<db> res(n + 1);
     for (int i = 0; i < n; ++i) {
-        vector<pair<db, db>> ev; // covered angle ranges on circle i
-        bool inside = false;
+        vector<pair<db, int>> ev; // (angle, +1 enter / -1 leave)
+        int cnt = 0; // how many other circles cover angle -PI of circle i
         for (int j = 0; j < n; ++j) if(j != i) {
             db d = len(o[j] - o[i]);
             int c = sgn(d + r[i] - r[j]);
-            if(c < 0 || (!c && (sgn(d) || j < i))) { inside = true; break; } // i inside j (equal circles: keep one)
+            if(c < 0 || (!c && (sgn(d) || j < i))) { ++cnt; continue; } // i inside j (equal circles: lower index covers)
             if(sgn(d - r[i] - r[j]) >= 0 || sgn(d + r[j] - r[i]) <= 0) continue; // apart, or j inside i
             db base = atan2(o[j].y - o[i].y, o[j].x - o[i].x);
-            db t = acos((r[i] * r[i] + d * d - r[j] * r[j]) / (2 * r[i] * d));
+            db t = acos(max((db)-1, min((db)1, (r[i] * r[i] + d * d - r[j] * r[j]) / (2 * r[i] * d))));
             db a = base - t, b = base + t;
-            if(a < -PI) ev.pb({a + 2 * PI, PI}), ev.pb({-PI, b});
-            else if(b > PI) ev.pb({a, PI}), ev.pb({-PI, b - 2 * PI});
-            else ev.pb({a, b});
+            if(a < -PI) a += 2 * PI;
+            if(b > PI) b -= 2 * PI;
+            if(a > b) ++cnt; // range wraps over -PI
+            ev.pb({a, 1}), ev.pb({b, -1});
         }
-        if(inside) continue;
-        auto add = [&](db a, db b) { // uncovered arc [a, b]
-            res += (r[i] * r[i] * (b - a) + o[i].x * r[i] * (sin(b) - sin(a)) - o[i].y * r[i] * (cos(b) - cos(a))) / 2;
-        };
         sort(all(ev));
         db cur = -PI;
-        for (auto [a, b] : ev) {
-            if(a > cur) add(cur, a);
-            cur = max(cur, b);
-        }
-        if(cur < PI) add(cur, PI);
+        auto add = [&](db b) { // arc [cur, b] of circle i, cnt other circles over it: boundary of the ">= cnt+1" region
+            res[cnt + 1] += (r[i] * r[i] * (b - cur) + o[i].x * r[i] * (sin(b) - sin(cur)) - o[i].y * r[i] * (cos(b) - cos(cur))) / 2;
+            cur = b;
+        };
+        for (auto [a, v] : ev) add(a), cnt += v;
+        add(PI);
     }
     return res;
 }
@@ -488,15 +492,34 @@ db closest(vector<P> A) {
 
 ## 练习题
 
-| 段 | 题 |
+Two per section: the first is close to a pure template check, the second makes you use it.
+P = 洛谷.
+
+| 段 | 题 1 | 题 2 |
+| --- | --- | --- |
+| 点和线 | Kattis `segmentintersection`: `segSeg`, prints none / a point / the overlap | Library Checker `sort_points_by_argument`: `cmpAng`, but it starts from the negative x-axis, so change `half()`; coords up to 1e9, use `ll` |
+| 多边形 | Kattis `pointinpolygon`: `inPoly`, vertices may be CW (winding number doesn't care) | CF 166B: `inConvex` with n = 1e5; A is clockwise (reverse it) and "strictly inside" means the edge doesn't count |
+| 凸包 | P2742: perimeter | P3829 [SHOI2012] 信用卡凸包: hull of the 4n arc centers, plus one full circle |
+| 旋转卡壳 | P1452: `diameter`, print the squared length | P3187 [HNOI2007] 最小矩形覆盖: `minRect`, but it also asks for the 4 corners |
+| 半平面交 | P4196 [CQOI2006] 凸多边形: every edge is a half-plane, then `area` | P2600 [ZJOI2008] 瞭望塔: half-planes above each slope; answer is at a vertex of one of the two broken lines |
+| 闵可夫斯基和 | P4557 [JSOI2018] 战争: A + (-B), then `inConvex` per query | CF 87E Mogohu-Rea Idol: sum of three polygons, check if 3h is inside |
+| 三角形的心 & 最小圆覆盖 | P1742: `minCircle` | P4288 [SHOI2014] 信号增幅仪: rotate by -a, divide x by p, then `minCircle` |
+| 交点 & 切线 | AOJ CGL_7_E: `circleCircle` | AOJ CGL_7_G: `tangents` with r2 and -r2, print touch points on circle 1 |
+| 圆与多边形面积交 | AOJ CGL_7_H: `polyCircle` | HDU 5130 Signal Interference: PB <= k PA is a circle (Apollonius), intersect it with the polygon |
+| 两圆面积交 & 圆的面积并 / 交 | CF 600D: `circleInterArea`; r up to 1e9, needs `using db = long double;` | SPOJ CIRU (P: SP8073): `circleCover(...)[1]`; SPOJ CIRUT: exactly-k areas from `circleCover` |
+| 极角扫描 | AOJ 1132 Circle and Points (= POJ 1981): `maxCover` with r = 1 | UVA1606 两亲性分子: line through a point, sort the rest by angle, two pointers |
+| 平面最近点对 | P1429 | P7883: integer coords, print the squared distance; the "check next 5 points" trick fails here |
+
+Single-function checks on AOJ (CGL): small problems, good test data. Run one right after typing a function.
+
+| 函数 | AOJ |
 | --- | --- |
-| 凸包 | P2742 |
-| 旋转卡壳 | P1452 |
-| 半平面交 | P4196 |
-| 闵可夫斯基和 | P4557 |
-| 最小圆覆盖 | P1742 |
-| 平面最近点对 | P1429 |
-| 最小矩形覆盖 | P3187 |
-| 两圆面积交 | CF 600D |
-| 圆的面积并 | SPOJ CIRU |
-| 极角扫描 | POJ 1981 |
+| `proj` / `refl` | CGL_1_A / CGL_1_B |
+| `segInter` / `lineInter` / `disSeg` | CGL_2_B / CGL_2_C / CGL_2_D |
+| `area` / `inPoly` | CGL_3_A / CGL_3_C (prints 2/1/0, same as `inPoly`) |
+| `hull` | CGL_4_A: keeps collinear points (use the `< 0` version), starts from lowest y (`lowFirst`) |
+| `diameter` / `convexCut` | CGL_4_B / CGL_4_C |
+| `closest` | CGL_5_A |
+| `inCenter` / `circumCenter` | CGL_7_B / CGL_7_C |
+| `lineCircle` / `tangent` | CGL_7_D / CGL_7_F |
+| `circleInterArea` | CGL_7_I |
