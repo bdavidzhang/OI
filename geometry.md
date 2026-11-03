@@ -1,7 +1,7 @@
 # 计算几何
 
 Every section builds on **基础**. Copy top to bottom; a section only uses the ones above it.
-Assumes the usual header (`bits/stdc++.h`, `sz`, `all`, `pb`, `mp`, `fi`, `se`).
+Assumes the header from `intro.md` (`bits/stdc++.h`, `sz`, `all`, `pb`, `mp`, `fi`, `se`).
 
 Conventions:
 - points are passed by value (16 bytes, cheaper to type than `const P&`)
@@ -488,15 +488,34 @@ db closest(vector<P> A) {
 
 ## 练习题
 
-| 段 | 题 |
+Two per section: the first is close to a pure template check, the second makes you use it.
+P = 洛谷.
+
+| 段 | 题 1 | 题 2 |
+| --- | --- | --- |
+| 点和线 | Kattis `segmentintersection`: `segSeg`, prints none / a point / the overlap | Library Checker `sort_points_by_argument`: `cmpAng`, but it starts from the negative x-axis, so change `half()`; coords up to 1e9, use `ll` |
+| 多边形 | Kattis `pointinpolygon`: `inPoly`, vertices may be CW (winding number doesn't care) | CF 166B: `inConvex` with n = 1e5; A is clockwise (reverse it) and "strictly inside" means the edge doesn't count |
+| 凸包 | P2742: perimeter | P3829 [SHOI2012] 信用卡凸包: hull of the 4n arc centers, plus one full circle |
+| 旋转卡壳 | P1452: `diameter`, print the squared length | P3187 [HNOI2007] 最小矩形覆盖: `minRect`, but it also asks for the 4 corners |
+| 半平面交 | P4196 [CQOI2006] 凸多边形: every edge is a half-plane, then `area` | P2600 [ZJOI2008] 瞭望塔: half-planes above each slope; answer is at a vertex of one of the two broken lines |
+| 闵可夫斯基和 | P4557 [JSOI2018] 战争: A + (-B), then `inConvex` per query | CF 87E Mogohu-Rea Idol: sum of three polygons, check if 3h is inside |
+| 三角形的心 & 最小圆覆盖 | P1742: `minCircle` | P4288 [SHOI2014] 信号增幅仪: rotate by -a, divide x by p, then `minCircle` |
+| 交点 & 切线 | AOJ CGL_7_E: `circleCircle` | AOJ CGL_7_G: `tangents` with r2 and -r2, print touch points on circle 1 |
+| 圆与多边形面积交 | AOJ CGL_7_H: `polyCircle` | HDU 5130 Signal Interference: PB <= k PA is a circle (Apollonius), intersect it with the polygon |
+| 两圆面积交 & 圆的面积并 | CF 600D: `circleInterArea`; r up to 1e9, needs `using db = long double;` | SPOJ CIRU (P: SP8073): `circleUnion` |
+| 极角扫描 | AOJ 1132 Circle and Points (= POJ 1981): `maxCover` with r = 1 | UVA1606 两亲性分子: line through a point, sort the rest by angle, two pointers |
+| 平面最近点对 | P1429 | P7883: integer coords, print the squared distance; the "check next 5 points" trick fails here |
+
+Single-function checks on AOJ (CGL): small problems, good test data. Run one right after typing a function.
+
+| 函数 | AOJ |
 | --- | --- |
-| 凸包 | P2742 |
-| 旋转卡壳 | P1452 |
-| 半平面交 | P4196 |
-| 闵可夫斯基和 | P4557 |
-| 最小圆覆盖 | P1742 |
-| 平面最近点对 | P1429 |
-| 最小矩形覆盖 | P3187 |
-| 两圆面积交 | CF 600D |
-| 圆的面积并 | SPOJ CIRU |
-| 极角扫描 | POJ 1981 |
+| `proj` / `refl` | CGL_1_A / CGL_1_B |
+| `segInter` / `lineInter` / `disSeg` | CGL_2_B / CGL_2_C / CGL_2_D |
+| `area` / `inPoly` | CGL_3_A / CGL_3_C (prints 2/1/0, same as `inPoly`) |
+| `hull` | CGL_4_A: keeps collinear points (use the `< 0` version), starts from lowest y (`lowFirst`) |
+| `diameter` / `convexCut` | CGL_4_B / CGL_4_C |
+| `closest` | CGL_5_A |
+| `inCenter` / `circumCenter` | CGL_7_B / CGL_7_C |
+| `lineCircle` / `tangent` | CGL_7_D / CGL_7_F |
+| `circleInterArea` | CGL_7_I |
