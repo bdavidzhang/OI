@@ -1,0 +1,17 @@
+{
+  "configurations": [
+    {
+      "name": "Homebrew GCC",
+      "compilerPath": "/opt/homebrew/bin/g++-16",
+      "intelliSenseMode": "macos-gcc-arm64",
+      "cppStandard": "c++20",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "/opt/homebrew/opt/gcc/include/c++/16",
+        "/opt/homebrew/opt/gcc/include/c++/16/aarch64-apple-darwin25",
+        "/opt/homebrew/opt/gcc/include/c++/16/backward"
+      ]
+    }
+  ],
+  "version": 4
+}
