@@ -19,7 +19,7 @@ int main () {
             while(1) {
                 ++k;
                 int l = i - k, r = i + k;
-                if(l < 1 || r > n || a[l][j] != a[r][j]) break;
+                if(l < 1 || r > n || a[l][j] != a[r][j])  {--k; break;}
                 len += 2;
             }
             for(int l = i - k; l <= i + k; ++l)
@@ -28,7 +28,7 @@ int main () {
             while(1) {
                 ++k;
                 int l = i - k, r = i + 1 + k;
-                if(l < 1 || r > n || a[l][j] != a[r][j]) break;
+                if(l < 1 || r > n || a[l][j] != a[r][j]) {--k; break;}
                 len += 2;
             }
             for(int l = i - k; l <= i + 1 + k; ++l)
@@ -37,7 +37,7 @@ int main () {
             while(1) {
                 ++k;
                 int l = j - k, r = j + k;
-                if(j < 1 || j > m|| a[i][l] != a[i][r]) break;
+                if(j < 1 || j > m|| a[i][l] != a[i][r])  {--k; break;}
                 len += 2;
             }
             for(int l = j - k; l <= j + k; ++l)
@@ -46,7 +46,7 @@ int main () {
             while(1) {
                 ++k;
                 int l = j - k, r = j + 1 + k;
-                if(j < 1 || j > m || a[i][l] != a[i][r]) break;
+                if(j < 1 || j > m || a[i][l] != a[i][r])  {--k; break;}
                 len += 2;
             }
             for(int l = j - k; l <= j + k + 1; ++l)
