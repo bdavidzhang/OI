@@ -1,0 +1,13 @@
+# CPH local problem metadata and downloaded sample cases
+.cph/
+*.[0-9]*.in
+*.[0-9]*.ans
+
+# Compiled programs and macOS debug symbols
+*.bin
+*.exe
+a.out
+main.out
+*.dSYM/
+/contests/icpc/SOUTH2026/B.out
+/contests/icpc/SOUTH2026/M.out
